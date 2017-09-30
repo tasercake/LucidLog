@@ -1,8 +1,8 @@
 # Learning Lucid
 
-### 28 Sep
+###### 28 Sep
 
-> At first glance, the Mojo looks a lot like the Arduino. Here's hoping it's going to be just as easy to learn!
+> At first glance, the Mojo board looks a lot like an Arduino. Here's hoping it's going to be just as easy to learn!
 
 ## First Steps
 
@@ -16,7 +16,7 @@ ISE is required in order to build the project and program the FPGA. Follow these
 
 1. Create an account at https://www.xilinx.com/registration/create-account.html and activate it.
 2. From https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/design-tools.html, download the *Split Installer Base* and the 3 *Data* files.
-3. ​
+3. Extract the *first* file and run the installer.
 
 ## Lucid Modules
 
@@ -37,6 +37,8 @@ Modules can be *instantiated* (like a *subcircuit* in JSim or a *class* in any O
 
 If present, the parameter list must be of the format `#(---parameters---)` after the `module` statement.
 
+#### Parameter Default Values
+
 Optionally, each parameter may be assigned a default value in the parameter list. If no default value is provided, a value must be provided when the module is used. The assignment of a default value is very python-like.
 
 **Syntax:**	`module module_name #( PARAM = <value> )`
@@ -45,7 +47,7 @@ Optionally, each parameter may be assigned a default value in the parameter list
 
 For additional safety, parameters can be given constraints, which, when violated, will throw errors.
 
-**Syntax: **`module module_name #( PARAM : <constraint> )`
+**Syntax:**`module module_name #( PARAM : <constraint> )`
 
 ### Module Ports
 
@@ -55,9 +57,16 @@ Every signal in/out of the module must be declared when defining the module.
 
 Signals can be of 3 types:
 
-       	1. *Inputs*: read-only inside module.
-        	2. *Outputs:* write-only inside module.
-         	3. *InOuts:* Rarely used.
+- *Inputs*: read-only inside module.
+- *Outputs:* write-only inside module.
+- *InOuts:* Rarely used.
+
+###### 30 Sep
+
+> Lucid seems like a higher level language than I'd initially expected. Syntactically, it feels a lot like Java.
 
 ### Module Body
 
+Module bodies often contain the following:
+
+- ​
