@@ -10,13 +10,19 @@
 
 Straightforward. Download and install the Mojo IDE, then create a new project from the base template at any location.
 
+ISE is required in order to build the project and program the FPGA.
+
 ##### Setting up ISE
 
-ISE is required in order to build the project and program the FPGA. Follow these steps to get it set up on Windows:
-
-1. Create an account at https://www.xilinx.com/registration/create-account.html and activate it.
-2. From https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/design-tools.html, download the *Split Installer Base* and the 3 *Data* files.
+1. [Create an account](https://www.xilinx.com/registration/create-account.html) with Xilinx and activate it.
+2. [Download](https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/design-tools.html) the *Split Installer Base* and the 3 *Data* files.
 3. Extract the *first* file and run the installer inside it.
+
+> ###### Troubleshooting
+>
+> I had trouble getting ISE to open up on Windows 10, and even when it did, it failed to acquire a license from Xilinx.
+>
+> Following the instructions on [this page](https://www.eevblog.com/forum/microcontrollers/guide-getting-xilinx-ise-to-work-with-windows-8-64-bit/) helped fix that
 
 ## Lucid Modules
 
@@ -26,7 +32,7 @@ They consist of the following components:
 
 1. `module` statement
 2. *(optional)* comma-separated parameter list
-3. port list
+3. port list (inputs and outputs)
 4. body
 
 Modules have signals that go in and out of them. Signals are explained in more detail later.
@@ -223,13 +229,9 @@ Arrays can be used to create multi-bit signals.
 
 > Arrays in Lucid are used very similarly to arrays in Java.
 
-### Bit Selectors
+##### Bit Selection (Slicing)
 
 Bit selectors are used to select a sub-array of an array, just like *slicing* in Python.
-
-> The only difference between this and Python slices is that in Lucid, the slice indices are inclusive.
-
-***Syntax:***
 
 ```verilog
 // Equivalent selectors:
@@ -237,4 +239,143 @@ array[3:8]; // select bits 3 to 8 (inclusive)
 array[3+:6]; // select the next 6 bits up from 3 (inclusive)
 array[8-:6]; // select the 6 bits down from 8 (inclusive) 
 ```
+
+> The only difference between this and Python slices is that in Lucid, the slice indices are inclusive.
+>
+> ###### 1 Oct
+>
+> "it is important to note that the explicit selector cannot be used with signals as an index. To use a signal to select multiple bits you must use the up-from or down-from selectors"
+>
+> ^ Not sure what this means yet or why it's important.
+
+##### Array Builders (Initializers)
+
+> Similar to array initializers in Java
+
+Use curly braces `{ }` to build an array from a series of constant values, provided each of those values has the same bit-width and dimensionality.
+
+##### Concatenation
+
+Use the `c` keyword to create an array from 2 or more arrays of the same dimensionality (except the first axis)
+
+```verilog
+sig arr1[4][8];
+sig arr2[5][8];
+sig result[9][8];
+result = c{arr1, arr2}; // arr2 gets the least significant bits in result
+```
+
+##### Duplication
+
+> Similar to multiplying a list by a number in Python.
+
+```verilog
+sig array1[8];
+3x{array1} == c{array1, array1, array1}; // this is true
+```
+
+##### Assignment
+
+Arrays of equal dimensionality and size can be assigned to each other
+
+##### Width
+
+The `.WIDTH` attribute of an array gives the width of the array if the array is 1d, or an array containing the width of *each* dimension if the array is multi-dimensional.
+
+> Very similar to how `ndarray.shape` works in *numpy*.
+
+Take for instance `sig y[4][8]`.
+
+`y.WIDTH` will return a 1D array `{4, 8}`.
+
+> The official docs say 2D array. Is this a typo?
+
+### Module Instantiations
+
+> Module instantiation in Lucid is very similar to class instantiation in Java or Python.
+
+#### Connections
+
+Connections to a module instance can either be specified at instantiation, or later on in a *connection block* or an *always block*.
+
+##### Direct Connections (at Instantiation)
+
+Connections are specified using the `.portName(target)` syntax:
+
+```verilog
+counter myCounter[8](#WIDTH(8), .clk(clk), .rst(rst));
+```
+
+##### Connection Blocks
+
+Connection blocks are used to share wires or connections between different modules.
+
+***Syntax:***
+
+```verilog
+.clk(clk1){
+    dff myDff1;
+  	dff myDff2;
+}
+.clk(clk2), .rst(rst1){
+    dff myDff3;
+}
+```
+
+Connection blocks can also be nested like:
+
+```verilog
+.clk(clk1){
+  	dff myDff1;
+  	.rst(rst1){
+   		dff myDff2;  
+  	}
+}
+```
+
+> Best practice: only use resets when really needed.
+
+### Always Blocks
+
+Used to describe combinational logic using operators and control statements.
+
+Within `always` blocks, signals can be assigned values.
+
+Can contain a single statement, or multiple statements within `{ }`.
+
+#### Assignment Statements
+
+Each signal can only be *assigned* in one `always` block. Attempting to assign to the same signal in different `always` blocks will cause ambiguity in the signal due to multiple drivers.
+
+A signal can be *read* from multiple `always` blocks, *provided that signal has been assigned a value* before it is read.
+
+The last assignment to a signal in an `always` block will be the value it will return when read from outside the block.
+
+#### Conditionals (If Statements) 
+
+> Very similar to Java's `if` statements
+
+The contents of an `if` block are executed if the condition evaluates to *anything other than 0*.
+
+#### Case Statements
+
+> Similar to `switch` statements in Java/C++
+
+Used in place of multiple `if` statements, allowing different operations for several different inputs.
+
+***Syntax:***
+
+```verilog
+case (expression) {
+    const: statements; // do something
+  	const: statements; // do something else
+  	default: statements; // do something else else?
+}
+```
+
+The `default` selector is matched if the input expression does not match any of the other cases. It is often useful to include as it acts like an `else` statement.
+
+> ###### Assigning Junk Numbers
+>
+> `out = 4bxxxx;` assigns the signal `out` an arbitrary value, which is decided by the circuit synthesizer as the optimal (easiest) value to generate there.
 
