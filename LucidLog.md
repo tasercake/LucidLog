@@ -24,6 +24,8 @@ ISE is required in order to build the project and program the FPGA.
 >
 > Following the instructions on [this page](https://www.eevblog.com/forum/microcontrollers/guide-getting-xilinx-ise-to-work-with-windows-8-64-bit/) helped fix that
 
+4. Open up Xilinx License Manager and acquire a *Free Vivado/ISE WebPack License*, then download and *Load the license file* in the Manage Licenses tab.
+
 ## Lucid Modules
 
 > Lucid modules appear to be defined fairly similarly to JSim subcircuits.
@@ -379,3 +381,70 @@ The `default` selector is matched if the input expression does not match any of 
 >
 > `out = 4bxxxx;` assigns the signal `out` an arbitrary value, which is decided by the circuit synthesizer as the optimal (easiest) value to generate there.
 
+#### For Statements
+
+> Syntactically identical to Java/C++ `for` loops
+>
+> Lucid's `for` loops do not serve the same purpose as Java's
+
+### Operators
+
+#### Negation
+
+`-expression`
+
+#### Bitwise Invert
+
+`~expression`
+
+#### Logical Invert
+
+Converts a 0-evaluating expression to 1, and vice-versa. *Not the same as bitwise invert*.
+
+> This is the same as Java's `!` operator
+
+`!expression`
+
+#### Multiplication
+
+`expression * expression`
+
+#### Addition, Subtraction
+
+`+, -`
+
+#### Logical AND/OR
+
+`&&` and `||` are to *Bitwise AND/OR* as *Logical Invert* is to *Bitwise Invert*
+
+#### Bitwise AND, OR, XOR, NAND, NOR, XNOR
+
+AND: `expr & expr`
+
+OR: `expr | expr`
+
+XOR: `expr ^ expr`
+
+> Do the two expressions need to have the same bit width?
+
+Prepend `~` to each of these operators if you want to negate them.
+
+#### Bit Compression
+
+Each of the logic operators can be used on single expressions too.
+
+Doing so is equivalent to feeding the string of bits representing the expression into a cascade of that logic operator.
+
+`&b1000` , `&1001`, and `&0100` evaluate to `b0` because *not all* of the bits are 1.
+
+`^expression` can be used to determine whether there are an odd or even number of 1s in the binary form of the expression.
+
+#### Logic Comparisons
+
+`<, >, ==, !=, <=, >=`
+
+#### Bit Shifting
+
+`value >> bits` and `value << bits` *0-filled shift* the value left and right respectively.
+
+`value >>> bits` and `value <<< bits`  
