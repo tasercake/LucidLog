@@ -310,7 +310,7 @@ counter myCounter[8](#WIDTH(8), .clk(clk), .rst(rst));
 
 ##### Connection Blocks
 
-Connection blocks are used to share wires or connections between different modules.
+Connection blocks are used to share wires or connections between different modules. 
 
 ***Syntax:***
 
@@ -385,7 +385,7 @@ The `default` selector is matched if the input expression does not match any of 
 
 > Syntactically identical to Java/C++ `for` loops
 >
-> Lucid's `for` loops do not serve the same purpose as Java's
+> Lucid's `for` loops do not serve the same purpose as Java's.
 
 ### Operators
 
@@ -401,9 +401,9 @@ The `default` selector is matched if the input expression does not match any of 
 
 Converts a 0-evaluating expression to 1, and vice-versa. *Not the same as bitwise invert*.
 
-> This is the same as Java's `!` operator
-
 `!expression`
+
+> This is the same as Java's `!` operator
 
 #### Multiplication
 
@@ -447,4 +447,5 @@ Doing so is equivalent to feeding the string of bits representing the expression
 
 `value >> bits` and `value << bits` *0-filled shift* the value left and right respectively.
 
-`value >>> bits` and `value <<< bits`  
+`value >>> bits` and `value <<< bits`  *arithmetic shift* the value left and right respectively.
+
